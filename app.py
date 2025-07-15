@@ -101,18 +101,77 @@ class EmailAlert(db.Model):
     sent_at = db.Column(db.DateTime, default=datetime.utcnow)
     subject = db.Column(db.String(200), nullable=False)
     content = db.Column(db.Text, nullable=True)
+
 # Helper Functions
+
+
 def send_email_async(to_email, subject, content):
     try:
-                    from_email="support@shadowstrike.com",
-            to_emails=to_email,
-            subject=subject,
-            html_content=content
+        import requests
+        import os
+        from dotenv import load_dotenv
+
+        load_dotenv()
+        api_key = os.environ.get("BREVO_API_KEY")
+        if not api_key:
+            raise Exception("Brevo API key not found in environment variables.")
+
+        response = requests.post(
+            "https://api.brevo.com/v3/smtp/email",
+            headers={
+                "accept": "application/json",
+                "api-key": api_key,
+                "content-type": "application/json"
+            },
+            json={
+                "sender": {"name": "ShadowStrike", "email": "support@shadowstrike.com"},
+                "to": [{"email": to_email}],
+                "subject": subject,
+                "htmlContent": content
+            }
         )
-        response =         logger.info(f"Email sent to {to_email}: {response.status_code}")
+        logger.info(f"Email sent to {to_email}: {response.status_code}")
     except Exception as e:
         logger.error(f"Email sending error: {e}")
+
 def send_welcome_email(user_email, username):
+    content = f"""
+    <html>
+    <body style="font-family: Arial; background: #1f2937; color: white; padding: 40px;">
+        <div style="max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, #065f46, #10b981); padding: 30px; border-radius: 15px;">
+            <h1 style="color: #ffffff; text-align: center;">Welcome to ShadowStrike Options!</h1>
+            <h2>Hello {username}!</h2>
+            <p>Your account has been successfully created.</p>
+            <p>We’re excited to have you onboard. Let us know if you need help getting started.</p>
+        </div>
+    </body>
+    </html>
+    """
+    send_email_async(user_email, "Welcome to ShadowStrike Options", content)
+
+
+
+
+
+def send_welcome_email(user_email, username):
+    content = f"""
+    <html>
+    <body style="font-family: Arial; background: #1f2937; color: white; padding: 40px;">
+        <div style="max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, #065f46, #10b981); padding: 30px; border-radius: 15px;">
+            <h1 style="color: #ffffff; text-align: center;">Welcome to ShadowStrike Options!</h1>
+            <h2>Hello {username}!</h2>
+            <p>We're thrilled to have you with us.</p>
+            <p>Start exploring your trading tools and set up your alerts to never miss an opportunity.</p>
+            <p style="text-align: center; margin-top: 40px;">
+                <a href="https://shadowstrikeoptions.com/login" style="background-color: #10b981; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px;">Log In Now</a>
+            </p>
+        </div>
+    </body>
+    </html>
+    """
+    send_email_async(user_email, "Welcome to ShadowStrike Options", content)
+
+
     content = f"""
     <html>
     <body style="font-family: Arial; background: #1f2937; color: white; padding: 40px;">
