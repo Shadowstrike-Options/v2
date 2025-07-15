@@ -1,0 +1,7 @@
+brevo_api_key: ${BREVO_API_KEY}
+credentials:
+  usernames:
+    ${ADMIN_EMAIL}:
+      name: ${ADMIN_NAME}
+      password: ${ADMIN_HASHED_PASSWORD}
+      email: ${ADMIN_EMAIL}
