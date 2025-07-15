@@ -106,7 +106,6 @@ class EmailAlert(db.Model):
 
 
 
-
 def send_welcome_email(user_email, username):
     content = f"""
     <html>
@@ -121,9 +120,6 @@ def send_welcome_email(user_email, username):
     </html>
     """
     send_email_async(user_email, "Welcome to ShadowStrike Options", content)
-
-
-
 
 
 def send_welcome_email(user_email, username):
