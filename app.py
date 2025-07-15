@@ -105,34 +105,7 @@ class EmailAlert(db.Model):
 # Helper Functions
 
 
-def send_email_async(to_email, subject, content):
-    try:
-        import requests
-        import os
-        from dotenv import load_dotenv
 
-        load_dotenv()
-        api_key = os.environ.get("BREVO_API_KEY")
-        if not api_key:
-            raise Exception("Brevo API key not found in environment variables.")
-
-        response = requests.post(
-            "https://api.brevo.com/v3/smtp/email",
-            headers={
-                "accept": "application/json",
-                "api-key": api_key,
-                "content-type": "application/json"
-            },
-            json={
-                "sender": {"name": "ShadowStrike", "email": "support@shadowstrike.com"},
-                "to": [{"email": to_email}],
-                "subject": subject,
-                "htmlContent": content
-            }
-        )
-        logger.info(f"Email sent to {to_email}: {response.status_code}")
-    except Exception as e:
-        logger.error(f"Email sending error: {e}")
 
 def send_welcome_email(user_email, username):
     content = f"""
