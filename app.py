@@ -241,7 +241,7 @@ def analyze_stock(symbol):
         df['RSI'] = RSIIndicator(df['Close']).rsi()
         df['MACD'] = MACD(df['Close']).macd_diff()
         df['ADX'] = ADXIndicator(df['High'], df['Low'], df['Close']).adx()
-                df['MA25'] = df['Close'].rolling(window=25).mean()
+        df['MA25'] = df['Close'].rolling(window=25).mean()
         df['MA50'] = df['Close'].rolling(window=50).mean()
         df['MA150'] = df['Close'].rolling(window=150).mean()
         # Volatility and stop-loss
