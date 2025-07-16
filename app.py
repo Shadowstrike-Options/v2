@@ -233,55 +233,18 @@ def calculate_vertical_spread(symbol, options, spread_type="bull_call"):
     except:
         return None
 def analyze_stock(symbol):
-    try:
-        df = fetch_stock_data(symbol)
-        if df is None:
-            return {"symbol": symbol, "recommendation": "No data", "details": {}}
-        # Technical indicators
-        df['RSI'] = RSIIndicator(df['Close']).rsi()
-        df['MACD'] = MACD(df['Close']).macd_diff()
-        df['ADX'] = ADXIndicator(df['High'], df['Low'], df['Close']).adx()
-        df['MA25'] = df['Close'].rolling(window=25).mean()
-        df['MA50'] = df['Close'].rolling(window=50).mean()
-        df['MA150'] = df['Close'].rolling(window=150).mean()
-        # Volatility and stop-loss
-        volatility = df['Close'].pct_change().rolling(window=30).std()[-1] * 100
-        iv = fetch_options_data(symbol)[0]["impliedVolatility"] if fetch_options_data(symbol) else 20
-        stop_loss = round(df['Close'].iloc[-1] * (1 - volatility / 100), 2)
-        latest = df.iloc[-1]
-        signals = []
-        if latest['MACD'] > 0 and df['MACD'].iloc[-2] <= 0:
-            signals.append("MACD Crossover (Bullish)")
-        elif latest['MACD'] < 0 and df['MACD'].iloc[-2] >= 0:
-            signals.append("MACD Crossover (Bearish)")
-        if latest['PPO'] > 0 and df['PPO'].iloc[-2] <= 0:
-                    elif latest['PPO'] < 0 and df['PPO'].iloc[-2] >= 0:
-                    if latest['Close'] > latest['MA50'] and df['Close'].iloc[-2] <= df['MA50'].iloc[-2]:
-            signals.append("Price/MA50 Crossover (Bullish)")
-        recommendation = "Hold"
-        if latest['RSI'] < 30 and latest['MACD'] > 0 and latest['ADX'] > 25:
-            recommendation = "Call (Bullish)"
-        elif latest['RSI'] > 70 and latest['MACD'] < 0 and latest['ADX'] > 25:
-            recommendation = "Put (Bearish)"
-        return {
-            "symbol": symbol,
-            "recommendation": recommendation,
-            "details": {
-                "RSI": round(latest['RSI'], 2),
-                "MACD": round(latest['MACD'], 2),
-                "ADX": round(latest['ADX'], 2),
-                "MA25": round(latest['MA25'], 2),
-                "MA50": round(latest['MA50'], 2),
-                "MA150": round(latest['MA150'], 2),
-                "Price": round(latest['Close'], 2),
-                "Volatility": round(volatility, 2),
-                "StopLoss": stop_loss
-            },
-            "signals": signals
-        }
-    except Exception as e:
-        logger.error(f"Analysis error for {symbol}: {e}")
-        return {"symbol": symbol, "recommendation": "Error", "details": {"Error": str(e)}}
+  
+        },
+        "signals": signals
+    }
+except Exception as e:
+    logger.error(f"Analysis error for {symbol}: {e}")
+    return {
+        "symbol": symbol,
+        "recommendation": "Error",
+        "details": {"Error": str(e)}
+    }
+
 # Routes
 @app.route('/')
 def index():
